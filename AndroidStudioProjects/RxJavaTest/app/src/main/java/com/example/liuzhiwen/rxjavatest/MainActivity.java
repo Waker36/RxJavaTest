@@ -61,6 +61,37 @@ public class MainActivity extends AppCompatActivity {
         //创建生产者和消费者的通道,张小黑在盯着你呢
         observable.subscribe(observer);
 
-        
+        //RxJava的链式操作
+        Observable.create(new ObservableOnSubscribe<Integer>() {
+            @Override
+            public void subscribe(ObservableEmitter<Integer> emitter) throws Exception {
+                emitter.onNext(1);
+                emitter.onNext(2);
+                emitter.onNext(3);
+                emitter.onComplete();
+            }
+        }).subscribe(new Observer<Integer>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+                Log.i(TAG, "开始盯着事件生产者，一有事件出来就吃掉");
+            }
+
+            @Override
+            public void onNext(Integer value) {
+
+                Toast.makeText(MainActivity.this, String.valueOf(value), Toast.LENGTH_LONG).show();
+                Log.i(TAG, "value==" + value);
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onComplete() {
+                Log.i(TAG, "事件生产者不再生产");
+            }
+        });
     }
 }
